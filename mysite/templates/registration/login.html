@@ -11,3 +11,8 @@
     <input type="submit" name="login" value="Login">
     <input type="hidden" name="next" value="{{ next }}">
 </form>
+
+<form method="post" action="{% url 'signup:signup' %}">
+    {% csrf_token %}
+    <input type="submit" name="signup" value="Sign up">
+</form>

@@ -32,6 +32,7 @@ ALLOWED_HOSTS = [ "107.170.60.32" ]
 
 INSTALLED_APPS = [
     'polls.apps.PollsConfig',
+    'signup.apps.SignupConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

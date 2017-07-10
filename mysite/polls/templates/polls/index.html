@@ -16,3 +16,7 @@
     {% csrf_token %}
     <input type="submit" name="logout" value="logout">
 </form>
+<form action="/signup/" method="post">
+    {% csrf_token %}
+    <input type="submit" name="signup" value="sign up">
+</form>

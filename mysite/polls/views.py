@@ -28,9 +28,6 @@ class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
 
-class LoginView(generic.TemplateView):
-    template_name = 'polls/login.html'
-
 class LogoutView(View):
     def post(self, request):
         logout(request)
