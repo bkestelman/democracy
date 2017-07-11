@@ -1,5 +1,15 @@
 {% load static %}
 
+<form action="/accounts/logout/" method="get">
+    {% csrf_token %}
+    <input type="submit" name="logout" value="logout">
+</form>
+
+<form action="/polls/create/" method="get">
+    {% csrf_token %}
+    <input type="submit" name="create" value="create poll">
+</form>
+
 <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}"/>
 {% if latest_question_list %}
     <ul>
@@ -12,11 +22,3 @@
     <p>No polls are available.</p>
 {% endif %}
 
-<form action="/accounts/logout/" method="get">
-    {% csrf_token %}
-    <input type="submit" name="logout" value="logout">
-</form>
-<form action="/signup/" method="post">
-    {% csrf_token %}
-    <input type="submit" name="signup" value="sign up">
-</form>

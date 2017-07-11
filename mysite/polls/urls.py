@@ -16,5 +16,7 @@ urlpatterns = [
     #url(r'^login/$', 'django.contrib.auth.views.login', name='login')
     #url(r'^login/$', views.LoginView.as_view(), name='login')
     # ex: /polls/thanks/
-    url(r'^thanks/$', views.ThanksView.as_view(), name='thanks')
+    url(r'^thanks/$', views.ThanksView.as_view(), name='thanks'),
+    # ex: /polls/create/
+    url(r'^create/$', views.CreatePollView.as_view(), name='create')
 ]

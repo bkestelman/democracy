@@ -10,12 +10,23 @@ import sys
 class SignupView(FormView):
     template_name = 'signup/index.html'
     form_class = UserCreationForm 
-    success_url = reverse_lazy('signup:done') 
+    success_url = reverse_lazy('signup:verify') 
 
     def form_valid(self, form):
         #print(form.username, file=sys.stderr)
         form.save()
         return super(SignupView, self).form_valid(form)
+
+    def form_invalid(self, form):
+        return HttpResponse("Form Invalid")
+
+class VerifyView(FormView):
+    template_name = 'signup/verify.html'
+    form_class = forms.VerifyForm
+
+    def form_valid(self, form):
+        form.save()
+        return super(VerifyView, self).form_valid(form)
 
     def form_invalid(self, form):
         return HttpResponse("Form Invalid")

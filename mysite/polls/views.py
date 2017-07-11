@@ -1,17 +1,17 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from django.urls import reverse
-from django.views import generic
-from django.views.generic import View
+from django.urls import reverse, reverse_lazy
+from django.views.generic import View, ListView, TemplateView, DetailView, FormView
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import logout
 
 from .models import Question, Choice
+from .forms import QuestionForm, ChoiceForm
 
-class IndexView(LoginRequiredMixin, generic.ListView):
+class IndexView(LoginRequiredMixin, ListView):
     template_name = 'polls/index.html'
     context_object_name = 'latest_question_list'
 
@@ -20,20 +20,29 @@ class IndexView(LoginRequiredMixin, generic.ListView):
             pub_date__lte=timezone.now()
         ).order_by('-pub_date')[:5]
 
-class DetailView(generic.DetailView):
+class DetailView(DetailView):
     model = Question
     template_name = 'polls/detail.html'
 
-class ResultsView(generic.DetailView):
+class ResultsView(DetailView):
     model = Question
     template_name = 'polls/results.html'
+
+class CreatePollView(LoginRequiredMixin, TemplateView):
+    template_name = 'polls/create.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CreatePollView, self).get_context_data(**kwargs)
+        context['question_form'] = QuestionForm()
+        context['choice_form'] = ChoiceForm()
+        return context
 
 class LogoutView(View):
     def post(self, request):
         logout(request)
         return HttpResponseRedirect('/thanks')
 
-class ThanksView(generic.TemplateView):
+class ThanksView(TemplateView):
     template_name = 'polls/thanks.html'
 
 @login_required
