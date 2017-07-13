@@ -49,7 +49,8 @@ class CreatePollView(LoginRequiredMixin, TemplateView):
         q = qf.save()
         cf = self.ChoiceFormSet(request.POST)
         for c in cf:
-            q.choice_set.create(choice_text=c.save(commit=False).choice_text)
+            if c.has_changed():
+                q.choice_set.create(choice_text=c.save(commit=False).choice_text)
         #self.choices = self.ChoiceFormSet(request.POST)
         #choices_set = self.choices.save(commit=False)
         #q.choice_set.set(choices_set)
