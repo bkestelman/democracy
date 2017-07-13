@@ -1,0 +1,9 @@
+{% if questions %}
+    <ul>
+    {% for q in questions %}
+        <li>{{ q.question_text }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No tagged_items</p>
+{% endif %}

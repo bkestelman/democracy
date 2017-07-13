@@ -13,6 +13,8 @@ import sys
 from .models import Question, Choice
 from .forms import QuestionForm, ChoiceForm
 
+from taggit.models import Tag, TaggedItem
+
 class IndexView(LoginRequiredMixin, ListView):
     template_name = 'polls/index.html'
     context_object_name = 'latest_question_list'
@@ -21,6 +23,11 @@ class IndexView(LoginRequiredMixin, ListView):
         return Question.objects.filter(
             pub_date__lte=timezone.now()
         ).order_by('-pub_date')[:5]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tags_list'] = Tag.objects.filter()[:5]
+        return context
 
 class DetailView(DetailView):
     model = Question
@@ -33,7 +40,6 @@ class ResultsView(DetailView):
 class CreatePollView(LoginRequiredMixin, TemplateView):
     template_name = 'polls/create.html'
     question_form = QuestionForm({'pub_date': timezone.now()})
-    #choice_form = ChoiceForm()
     ChoiceFormSet = formset_factory(ChoiceForm, extra=5)
     choices = ChoiceFormSet()
     success_url = reverse_lazy('polls:index')
@@ -51,13 +57,16 @@ class CreatePollView(LoginRequiredMixin, TemplateView):
         for c in cf:
             if c.has_changed():
                 q.choice_set.create(choice_text=c.save(commit=False).choice_text)
-        #self.choices = self.ChoiceFormSet(request.POST)
-        #choices_set = self.choices.save(commit=False)
-        #q.choice_set.set(choices_set)
-        #q.choice_set.set(self.choices)
-        #c = q.choice_set.create(choice_text=request.POST['choice_text'])
-        #choices = self.ChoiceFormSet()
         return HttpResponseRedirect(self.success_url)
+
+class TagView(ListView):
+    template_name = 'polls/tag.html'
+    context_object_name = 'questions'
+
+    def get_queryset(self, **kwargs):
+        tagged_items = TaggedItem.objects.filter(tag_id=self.kwargs['pk'])
+        q_ids = list(map(lambda x: x.object_id, tagged_items))
+        return Question.objects.filter(id__in=q_ids)
 
 class LogoutView(View):
     def post(self, request):
