@@ -4,11 +4,14 @@ from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
+from taggit.managers import TaggableManager
+
 
 @python_2_unicode_compatible
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
+    tags = TaggableManager()
 
     def __str__(self):
         return self.question_text
