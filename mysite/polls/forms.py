@@ -1,12 +1,19 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, HiddenInput
 from .models import Question, Choice
 
 class QuestionForm(ModelForm):
     class Meta:
         model = Question
         fields = ['question_text', 'pub_date']
+        widgets = {
+            'pub_date': HiddenInput,
+        }
         
 class ChoiceForm(ModelForm): 
     class Meta:
         model = Choice
-        fields = ['question', 'choice_text', 'votes']
+        fields = ['choice_text', 'votes']
+        widgets = {
+            #'question': HiddenInput,
+            'votes': HiddenInput,
+        }

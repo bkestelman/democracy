@@ -7,6 +7,8 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import logout
+from django.forms import formset_factory
+import sys
 
 from .models import Question, Choice
 from .forms import QuestionForm, ChoiceForm
@@ -30,12 +32,31 @@ class ResultsView(DetailView):
 
 class CreatePollView(LoginRequiredMixin, TemplateView):
     template_name = 'polls/create.html'
+    question_form = QuestionForm({'pub_date': timezone.now()})
+    #choice_form = ChoiceForm()
+    ChoiceFormSet = formset_factory(ChoiceForm, extra=5)
+    choices = ChoiceFormSet()
+    success_url = reverse_lazy('polls:index')
 
     def get_context_data(self, **kwargs):
         context = super(CreatePollView, self).get_context_data(**kwargs)
-        context['question_form'] = QuestionForm()
-        context['choice_form'] = ChoiceForm()
+        context['question_form'] = self.question_form 
+        context['formset'] = self.choices 
         return context
+
+    def post(self, request):
+        qf = QuestionForm(request.POST)
+        q = qf.save()
+        cf = self.ChoiceFormSet(request.POST)
+        for c in cf:
+            q.choice_set.create(choice_text=c.save(commit=False).choice_text)
+        #self.choices = self.ChoiceFormSet(request.POST)
+        #choices_set = self.choices.save(commit=False)
+        #q.choice_set.set(choices_set)
+        #q.choice_set.set(self.choices)
+        #c = q.choice_set.create(choice_text=request.POST['choice_text'])
+        #choices = self.ChoiceFormSet()
+        return HttpResponseRedirect(self.success_url)
 
 class LogoutView(View):
     def post(self, request):
