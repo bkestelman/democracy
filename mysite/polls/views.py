@@ -3,17 +3,21 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse, reverse_lazy
 from django.views.generic import View, ListView, TemplateView, DetailView, FormView
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import logout
 from django.forms import formset_factory
-import sys
+
+import sys, json
 
 from .models import Question, Choice
 from .forms import QuestionForm, ChoiceForm
 
 from taggit.models import Tag, TaggedItem
+
+from .documents import QuestionDocument
 
 class IndexView(LoginRequiredMixin, ListView):
     template_name = 'polls/index.html'
@@ -53,6 +57,8 @@ class CreatePollView(LoginRequiredMixin, TemplateView):
     def post(self, request):
         qf = QuestionForm(request.POST)
         q = qf.save()
+        q.author = request.user
+        q.save()
         cf = self.ChoiceFormSet(request.POST)
         for c in cf:
             if c.has_changed():
@@ -76,6 +82,16 @@ class LogoutView(View):
 class ThanksView(TemplateView):
     template_name = 'polls/thanks.html'
 
+class SearchView(TemplateView):
+    template_name = 'polls/search.html'
+
+def search_results(request):
+    s = QuestionDocument.search().query("fuzzy", question_text={ "value": request.GET['keywords'], "fuzziness": 2 })
+    results = [] 
+    for hit in s:
+        results.append(hit.question_text)
+    return HttpResponse(json.dumps({ "hits" : results }), content_type="application/json")
+        
 @login_required
 def home(request):
     return HttpResponse('Login Page')
@@ -92,6 +108,7 @@ def vote(request, question_id):
         })
     else:
         selected_choice.votes += 1
+        selected_choice.voters.add(request.user)
         selected_choice.save()
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 

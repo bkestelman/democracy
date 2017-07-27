@@ -1,0 +1,9 @@
+Search:
+<input type="text" id="search" name="search" value="Enter keywords"/>
+<input type="button" value="Search" onclick="search();"/>
+{% load static %}
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+crossorigin="anonymous"></script>
+<script type="text/javascript" src="{% static "polls/search.js" %}"></script>
+<div id="results"></div>

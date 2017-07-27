@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^signup/', include('signup.urls')),
     url(r'^admin/', admin.site.urls),
+#    url(r'^search/', include('haystack.urls')),
 ]

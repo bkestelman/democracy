@@ -3,6 +3,7 @@ import datetime
 from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
+from django.contrib.auth.models import User
 
 from taggit.managers import TaggableManager
 
@@ -11,6 +12,7 @@ from taggit.managers import TaggableManager
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
+    author = models.ForeignKey(User, null = True) # check on_delete behavior
     tags = TaggableManager()
 
     def __str__(self):
@@ -29,6 +31,7 @@ class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete = models.CASCADE, null=True)
     choice_text = models.CharField(max_length=200)
     votes = models.IntegerField(default=0)
+    voters = models.ManyToManyField(User)
 
     def __str__(self):
         return self.choice_text

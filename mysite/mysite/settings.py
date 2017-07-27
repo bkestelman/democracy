@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'polls.apps.PollsConfig',
     'signup.apps.SignupConfig',
     'taggit',
+    'django_elasticsearch_dsl',
+#    'haystack',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -127,3 +129,18 @@ STATIC_URL = '/static/'
 
 LOGIN_URL = '/accounts/login'
 LOGOUT_REDIRECT_URL = '/polls/thanks'
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': '159.203.66.103:9200'
+    },
+}
+
+#HAYSTACK_CONNECTIONS = {
+#    'default': {
+#        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+#        'URL': 'http://159.203.66.103:9200/',
+#        'INDEX_NAME': 'haystack',
+#    },
+#}
+
